@@ -1,97 +1,101 @@
-const uuid = require("uuid");
-const uuid4 = uuid.v4();
 const { validationResult } = require("express-validator");
 
 const HttpError = require("../models/http-error");
+const Products = require("../models/products");
 
-let DUMMY_PRODUCTS = [
-  {
-    id: "p1",
-    name: "Butterscotch Sponge Cake",
-    description:
-      "Indulge your friends and family with this luscious butterscotch cake recipe",
-    price: 22.99,
-    baker: "ll1",
-  },
-];
+const getAllProducts = async (req, res, next) => {
+  const allProducts = await Products.findAll();
 
-const getProductById = (req, res, next) => {
+  if (Products.length <= 0) {
+    return next(new HttpError("Could not find any parking areas", 404));
+  }
+
+  res.status(200).json({ products: allProducts });
+};
+
+const getProductById = async (req, res, next) => {
   const productId = req.params.pid;
-  const product = DUMMY_PRODUCTS.find((p) => {
-    return p.id === productId;
+  const foundProduct = await Products.findByPk(productId).catch((err) => {
+    return next(new HttpError("Product is not found", 422));
   });
 
-  if (!product) {
-    throw new HttpError("Could not find product with provided id.", 404);
+  if (!foundProduct) {
+    return next(new HttpError("Product is not found", 422));
   }
 
-  res.json({ product });
+  res.status(200).json({ product: foundProduct });
 };
 
-const getProductsByBakerId = (req, res, next) => {
-  const userId = req.params.uid;
-  const products = DUMMY_PRODUCTS.filter((p) => {
-    return p.baker === userId;
-  });
-
-  if (!products || products.length === 0) {
-    return next(new HttpError("Could not find product with provided id.", 404));
-  }
-
-  res.json({ products });
-};
-
-const createProduct = (req, res, next) => {
+const createProduct = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new HttpError("Invalid inputs passed, please check your data.", 422);
   }
 
-  const { name, description, price, baker } = req.body;
-  const createdProduct = {
-    id: uuid4,
-    name,
-    description,
-    price,
-    baker,
-  };
+  const { Name, Description, Price, Category, ImageURL } = req.body;
 
-  DUMMY_PRODUCTS.push(createdProduct);
+  const createdProduct = await Products.create({
+    Name,
+    Description,
+    Price,
+    Category,
+    ImageURL,
+  }).catch((err) => {
+    next(new HttpError(err.message, 422));
+  });
 
-  res.status(201).json({ product: createdProduct });
+  res.status(201).json({ createdProduct: createdProduct.dataValues });
 };
 
-const updateProductById = (req, res, next) => {
+const updateProductById = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     throw new HttpError("Invalid inputs passed, please check your data.", 422);
   }
 
-  const { description, price } = req.body;
+  const { Description, Price, Category, ImageURL } = req.body;
   const productId = req.params.pid;
 
-  const updatedProduct = { ...DUMMY_PRODUCTS.find((p) => p.id === productId) };
-  const productIndex = DUMMY_PRODUCTS.findIndex((p) => p.id === productId);
-  updatedProduct.description = description;
-  updatedProduct.price = price;
+  await ParkingArea.update(
+    {
+      Description: Description,
+      Price: Price,
+      Category: Category,
+      ImageURL: ImageURL,
+    },
+    { where: { ProductID: productId } }
+  ).catch((error) => {
+    next(
+      new HttpError(
+        error.message || "There was an issue updating the entry.",
+        422
+      )
+    );
+  });
 
-  DUMMY_PRODUCTS[productIndex] = updatedProduct;
-
-  res.status(200).json({ product: updatedProduct });
+  res.status(200).json({ message: "Updated parking area successfully!" });
 };
 
-const deleteProductById = (req, res, next) => {
+const deleteProductById = async (req, res, next) => {
   const productId = req.params.pid;
-  if (!DUMMY_PRODUCTS.filter((p) => p.id !== productId)){
-    throw new HttpError("Couldn't find the product with id", 404);
+  const deletedProduct = await Products.findByPk(productId).catch((err) => {
+    return next(
+      new HttpError("Could not find parking area with the given id", 422)
+    );
+  });
+
+  if (!deletedProduct) {
+    return next(
+      new HttpError("Could not find parking area with the given id", 422)
+    );
   }
-  DUMMY_PRODUCTS = DUMMY_PRODUCTS.filter((p) => p.id !== productId);
 
-  res.status(200).json({ message: "removed product" });
+  deletedProduct.destroy();
+  res.status(200).json({ message: "Removed Product" });
 };
 
+exports.getAllProducts = getAllProducts;
 exports.getProductById = getProductById;
-exports.getProductsByBakerId = getProductsByBakerId;
 exports.createProduct = createProduct;
 exports.updateProductById = updateProductById;
 exports.deleteProductById = deleteProductById;

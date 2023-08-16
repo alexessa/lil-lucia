@@ -1,58 +1,111 @@
-const uuid = require("uuid");
-const uuid4 = uuid.v4();
-const { validationResult } = require("express-validator");
-
 const HttpError = require("../models/http-error");
+const Users = require("../models/users");
 
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "Mark Jeremy",
-    email: "markjeremy@yahoo.com",
-    password: "testPassword",
-  },
-];
+const getUsers = async (req, res, next) => {
+  const allUsers = await Users.findAll();
 
-const getUsers = (req, res, next) => {
-  res.json({ users: DUMMY_USERS });
+  if (allUsers.length <= 0) {
+    return next(new HttpError("Could not find any users", 404));
+  }
+
+  res.status(200).json({ users: allUsers });
 };
 
-const signup = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    throw new HttpError("Invalid inputs passed, please check your data.", 422);
+const signup = async (req, res, next) => {
+  const { FirstName, LastName, Address, Email, Password } = req.body;
+
+  const identifiedUser = await Users.findOne({ where: { Email: Email } }).catch(
+    (errors) => {
+      return next(new HttpError(errors.message, 500));
+    }
+  );
+
+  if (identifiedUser) {
+    return next(
+      new HttpError("User already exists, please log in instead", 422)
+    );
   }
-  
-  const { name, email, password } = req.body;
 
-  const hasUser = DUMMY_USERS.find((user) => user.email === email);
+  const createdUser = await Users.create({
+    FirstName,
+    LastName,
+    Address,
+    Email,
+    Password,
+    IsAdmin: false,
+  }).catch((err) => {
+    return next(new HttpError(err.message, 422));
+  });
 
-  if (hasUser) {
-    throw new HttpError("User already exists", 422);
-  }
-
-  const createdUser = {
-    id: uuid4,
-    name,
-    email,
-    password,
-  };
-
-  DUMMY_USERS.push(createdUser);
   res.status(201).json({ user: createdUser });
 };
 
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  const identifiedUser = DUMMY_USERS.find((user) => user.email === email);
-  if (!identifiedUser || identifiedUser.password !== password) {
-    throw new HttpError("Could not identify user", 401);
+const login = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data", 422)
+    );
   }
 
-  res.json({ message: "Logged In" });
+  const { Email, Password } = req.body;
+
+  const identifiedUser = await Users.findOne({ where: { Email: Email } }).catch(
+    (errors) => {
+      return next(
+        new HttpError(
+          "There is an issue with the log in, please try again",
+          500
+        )
+      );
+    }
+  );
+
+  if (!identifiedUser || identifiedUser.Password !== Password) {
+    return next(
+      new HttpError("There is an issue with the log in, please try again", 401)
+    );
+  }
+
+  res.json({ message: "Logged in successfully", user: identifiedUser });
+};
+
+const getUserProfile = async (req, res, next) => {
+  const userId = req.params.uid;
+
+  const identfiedUser = await Users.findOne({ where: { UserID: userId } }).catch(
+    (err) => {
+      return next(
+        new HttpError("There was an issue fetching the user profile", 422)
+      );
+    }
+  );
+
+  if (!identfiedUser) {
+    return next(
+      new HttpError("There was an issue fetching the user profile", 422)
+    );
+  }
+
+  res.status(200).json({ user: identfiedUser });
+};
+
+const updateUserProfile = async (req, res, next) => {
+  const userId = req.params.uid;
+  const { FirstName, LastName, Address } = req.body;
+
+  await Users.update(
+    { FirstName: FirstName, LastName: LastName, Address: Address },
+    { where: { UserID: userId } }
+  ).catch((err) => {
+    return new HttpError(err.message, 422);
+  });
+
+  res.json(200).json({ message: "User has been updated successfully" });
 };
 
 exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;
+exports.getUserProfile = getUserProfile;
+exports.updateUserProfile = updateUserProfile;

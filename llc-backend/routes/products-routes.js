@@ -5,23 +5,28 @@ const productsController = require("../controllers/products-controllers");
 
 const router = express.Router();
 
-router.get("/:pid", productsController.getProductById);
+router.get("/", productsController.getAllProducts);
 
-router.get("/baker/:uid", productsController.getProductsByBakerId);
+router.get("/:pid", productsController.getProductById);
 
 router.post(
   "/",
   [
-    check("name").not().isEmpty(),
-    check("description").isLength({ min: 5 }),
-    check("price").not().isEmpty(),
+    check("Name").not().isEmpty(),
+    check("Description").isLength({ min: 5 }),
+    check("Price").not().isEmpty(),
   ],
   productsController.createProduct
 );
 
 router.patch(
   "/:pid",
-  [check("description").isLength({ min: 5 }), check("price").not().isEmpty()],
+  [
+    check("Description").isLength({ min: 5 }),
+    check("Price").not().isEmpty(),
+    check("Category").not().isEmpty(),
+    check("ImageURL").not().isEmpty(),
+  ],
   productsController.updateProductById
 );
 

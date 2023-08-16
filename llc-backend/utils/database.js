@@ -1,19 +1,11 @@
-const mysql = require("mysql");
+const Sequelize = require("sequelize");
 
-const mysqlConnection = mysql.createConnection({
-  host: "llc-db.cxmvq8oh8y1x.eu-north-1.rds.amazonaws.com",
-  user: "admin",
-  password: "adminPass",
-  multipleStatements: true,
+const sequelize = new Sequelize("lil_lucia", "admin", "adminPass", {
+  //const sequelize = new Sequelize("lil_lucia", "root", "rootPass@123", {
+  host: "llcdb.cxmvq8oh8y1x.eu-north-1.rds.amazonaws.com",
+  //host: "localhost",
+  port: 3306,
+  dialect: "mysql"
 });
 
-mysqlConnection.connect((err) => {
-  if (!err){
-    console.log("Connection established");
-  } else {
-    throw err;
-  }
-});
-
-
-module.exports = mysqlConnection;
+module.exports = sequelize;
