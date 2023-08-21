@@ -39,7 +39,13 @@ export const ShoppingCart = ({ isOpen }: ShoppingCartProps) => {
           </Box>
           <Box sx={{ position: "absolute", bottom: 0, right: 0, p: 1 }}>
             <Link to={"/checkout"}>
-              <Button sx={{ color: pink[400] }} onClick={closeCart}>Checkout</Button>
+              <Button
+                sx={{ color: pink[400] }}
+                onClick={closeCart}
+                disabled={cartItems.length > 0 ? false : true}
+              >
+                Checkout
+              </Button>
             </Link>
           </Box>
         </Drawer>
