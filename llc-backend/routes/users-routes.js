@@ -23,6 +23,6 @@ router.post(
 
 router.post("/login", usersController.login);
 
-router.patch(":uid", usersController.updateUserProfile);
+router.patch("/:uid", usersController.updateUserProfile);
 
 module.exports = router;

@@ -6,8 +6,8 @@ const Products = require("../models/products");
 const getAllProducts = async (req, res, next) => {
   const allProducts = await Products.findAll();
 
-  if (Products.length <= 0) {
-    return next(new HttpError("Could not find any parking areas", 404));
+  if (allProducts.length <= 0) {
+    return next(new HttpError("Could not find any products", 404));
   }
 
   res.status(200).json({ products: allProducts });
@@ -24,6 +24,21 @@ const getProductById = async (req, res, next) => {
   }
 
   res.status(200).json({ product: foundProduct });
+};
+
+const getProductByCategory = async (req, res, next) => {
+  const category = req.params.category;
+  const foundProduct = await Products.findAll({
+    where: { Category: category },
+  }).catch((err) => {
+    return next(new HttpError("Products are not found", 422));
+  });
+
+  if (foundProduct.length <= 0) {
+    return next(new HttpError("Products are not found", 422));
+  }
+
+  res.status(200).json({ products: foundProduct });
 };
 
 const createProduct = async (req, res, next) => {
@@ -56,7 +71,7 @@ const updateProductById = async (req, res, next) => {
   const { Description, Price, Category, ImageURL } = req.body;
   const productId = req.params.pid;
 
-  await ParkingArea.update(
+  await Products.update(
     {
       Description: Description,
       Price: Price,
@@ -96,6 +111,7 @@ const deleteProductById = async (req, res, next) => {
 
 exports.getAllProducts = getAllProducts;
 exports.getProductById = getProductById;
+exports.getProductByCategory = getProductByCategory;
 exports.createProduct = createProduct;
 exports.updateProductById = updateProductById;
 exports.deleteProductById = deleteProductById;

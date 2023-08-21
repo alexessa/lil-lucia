@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const HttpError = require("../models/http-error");
 const Users = require("../models/users");
 
@@ -101,7 +102,7 @@ const updateUserProfile = async (req, res, next) => {
     return new HttpError(err.message, 422);
   });
 
-  res.json(200).json({ message: "User has been updated successfully" });
+  res.status(200).json({ message: "User has been updated successfully" });
 };
 
 exports.getUsers = getUsers;
