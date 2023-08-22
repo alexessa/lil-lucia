@@ -22,12 +22,14 @@ const UserProfile = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-        try {
-            const responseData = await sendRequest(`http://localhost:5000/api/user/${user.UserID}`);
+      try {
+        const responseData = await sendRequest(
+          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/${user.UserID}`
+        );
 
-            setFetchedUser(responseData.user);
-        } catch (err) {}
-    }
+        setFetchedUser(responseData.user);
+      } catch (err) {}
+    };
 
     fetchUser();
   }, [sendRequest, user]);
@@ -41,7 +43,7 @@ const UserProfile = () => {
         </Box>
       )}
       {!isLoading && fetchedUser && (
-        <Box sx={{ display: "flex", justifyContent: "center", p:4 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
           <Card>
             <Box m={4}>
               <Typography variant="h6" component="h2">

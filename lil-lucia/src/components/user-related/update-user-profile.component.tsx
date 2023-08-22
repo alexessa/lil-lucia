@@ -45,7 +45,7 @@ const UpdateUserProfile = () => {
     const fetchParking = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/user/${auth.user.UserID}`
+          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/${auth.user.UserID}`
         );
         setFetchedUser(responseData.user);
         setFormData(
@@ -79,7 +79,7 @@ const UpdateUserProfile = () => {
     };
     try {
       const responseData = await sendRequest(
-        `http://localhost:5000/api/user/${auth.user.UserID}`,
+        `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/${auth.user.UserID}`,
         "PATCH",
         JSON.stringify(profile),
         { "Content-Type": "application/json" }

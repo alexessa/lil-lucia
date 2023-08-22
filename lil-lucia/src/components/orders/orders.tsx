@@ -15,7 +15,7 @@ const OrdersComponent = () => {
     const fetchOrders = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/orders/user/${auth.user.UserID}`
+          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orders/user/${auth.user.UserID}`
         );
 
         setLoadedOrders(responseData.orders);

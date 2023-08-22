@@ -47,7 +47,7 @@ const UpdateParkingArea = () => {
     const fetchProduct = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/products/${productId}`
+          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${productId}`
         );
         setLoadedProduct(responseData.product);
         setFormData(
@@ -86,7 +86,7 @@ const UpdateParkingArea = () => {
     };
     try {
       await sendRequest(
-        `http://localhost:5000/api/products/${productId}`,
+        `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${productId}`,
         "PATCH",
         JSON.stringify(product),
         { "Content-Type": "application/json" }
