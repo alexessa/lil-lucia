@@ -50,7 +50,7 @@ const ProductItem = (prop: any) => {
   const deleteParkingAreaHandler = async () => {
     try {
       await sendRequest(
-        `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${product.ProductID}`,
+        `https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${product.ProductID}`,
         "DELETE"
       );
       prop.onDelete(product.ProductID);

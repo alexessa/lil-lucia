@@ -67,7 +67,7 @@ const Authentication = () => {
     if (isLogin) {
       try {
         const responseData = await sendRequest(
-          "http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/login",
+          "https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/login",
           "POST",
           JSON.stringify({
             Email: formState.inputs.email.value,
@@ -81,7 +81,7 @@ const Authentication = () => {
     } else {
       try {
         const responseData = await sendRequest(
-          "http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/signup",
+          "https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/user/signup",
           "POST",
           JSON.stringify({
             FirstName: formState.inputs.firstName.value,

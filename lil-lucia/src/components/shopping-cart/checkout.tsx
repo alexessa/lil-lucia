@@ -22,7 +22,7 @@ const Checkout = () => {
   const handleOrderButtonClick = async () => {
     try {
       const responseData = await sendRequest(
-        "http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orders",
+        "https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orders",
         "POST",
         JSON.stringify({
           UserID: auth.user.UserID,
@@ -38,7 +38,7 @@ const Checkout = () => {
         const subtotal = item.product.Price * item.quantity;
 
         await sendRequest(
-          "http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orderItems",
+          "https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orderItems",
           "POST",
           JSON.stringify({
             OrderID: (responseData.createdOrder as Order).OrderID,

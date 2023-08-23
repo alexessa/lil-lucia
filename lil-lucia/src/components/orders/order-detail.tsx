@@ -17,7 +17,7 @@ const OrderDetails = () => {
     const fetchOrderDetails = async () => {
       try {
         const responseData = await sendRequest(
-          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orderItems/${orderId}`
+          `https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orderItems/${orderId}`
         );
 
         setLoadedOrderItems(responseData.orderItems);
@@ -27,7 +27,7 @@ const OrderDetails = () => {
     const fetchOrders = async () => {
       try {
         const responseData = await sendRequest(
-          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orders/${orderId}`
+          `https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/orders/${orderId}`
         );
 
         setLoadedOrder(responseData.order);
