@@ -23,7 +23,7 @@ const OrderDetailItem = (prop: any) => {
     const fetchProduct = async () => {
       try {
         const responseData = await sendRequest(
-          `https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${orderItem.ProductID}`
+          `http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products/${orderItem.ProductID}`
         );
 
         setLoadedProducts(responseData.product);

@@ -10,16 +10,16 @@ const ProductComponent = () => {
   const { isLoading, error, sendRequest } = useHttpClient();
 
   useEffect(() => {
-    const fetchParkingAreas = async () => {
+    const fetchProducts = async () => {
       try {
         const responseData = await sendRequest(
-          "https://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products"
+          "http://ec2-54-80-72-110.compute-1.amazonaws.com:5000/api/products"
         );
 
         setLoadingProducts(responseData.products);
       } catch (e) {}
     };
-    fetchParkingAreas();
+    fetchProducts();
   }, []);
 
   if (isLoading) {
